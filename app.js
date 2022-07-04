@@ -13,10 +13,10 @@ const SECRET_KEY = 'testBE';
 const jwtTokenValidate = (req, res, next) => {
     // check header or url parameters or post parameters for token
     var token = req?.body?.token || req?.query?.token || req?.headers['x-access-token'];
-  
+
     // decode token
     if (token) {
-  
+
       // verifies secret and checks exp
       jwt.verify(token, SECRET_KEY, function(err, decoded) {
         if (err) {
@@ -28,28 +28,28 @@ const jwtTokenValidate = (req, res, next) => {
           next();
         }
       });
-  
+
     } else {
-  
+
       // if there is no token
       // return an error
       return res.status(403).send({
         success: false,
         message: 'No token provided.'
       });
-  
+
     }
   }
 
 app.use((req, res, next) => {
     const path = url.parse(req.url).pathname;
     console.log(path);
-  
+
     //No JWT token check
     if (/^\/login/.test(path)) {
       return next();
     }
-  
+
     return jwtTokenValidate(req, res, next);
   });
 
@@ -71,9 +71,11 @@ db.connect((err) => {
     }
 });
 
-app.post('/login', jsonParser, (req, res) => {
+app.use(jsonParser);
+app.post('/login', (req, res) => {
+        console.log(req);
     const body = req.body;
-    db.query(`select * from AuthTable where EmailID="${body.userId}" and Password="${body.password}"`, (err, result, field) => {
+    db.query(`select * from AuthTable where EmailID="${body?.userId}" and Password="${body?.password}"`, (err, result, field) => {
         if (err) {
             console.log(err);
             res.status(500).send('Something went wrong');
@@ -108,7 +110,7 @@ app.post('/getData', jsonParser, (req, res) => {
             })
         } else {
             res.status(404).send('Data not found');
-        } 
+        }
     })
 });
 
