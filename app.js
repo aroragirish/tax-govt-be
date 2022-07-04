@@ -1,5 +1,6 @@
 const express = require('express');
 const mysql = require('mysql');
+var cors = require('cors')
 var bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const url = require('url');
@@ -51,6 +52,8 @@ app.use((req, res, next) => {
   
     return jwtTokenValidate(req, res, next);
   });
+
+  app.use(cors())
 
 const db = mysql.createConnection({
     host: 'mytestdb.cfmqtzlsywwt.ap-south-1.rds.amazonaws.com',
