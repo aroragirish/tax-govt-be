@@ -96,7 +96,7 @@ app.post("/login", (req, res) => {
     });
 });
 
-app.post("/getData", jsonParser, (req, res) => {
+app.post("/getData", (req, res) => {
     const { placeId } = req.body;
     db.query(`select * from UserTable where PlaceId="${placeId}"`, (err, result, field) => {
         if (err) {
@@ -114,9 +114,10 @@ app.post("/getData", jsonParser, (req, res) => {
     })
 });
 
-app.post("/postData", jsonParser, (req, res) => {
+app.post("/postData", (req, res) => {
     const body = req.body;
-    db.query(`insert into UserTable( address , NoOfIndividuals ,  Above18  ,  Below18 ,  CalenderYear ,  YealyTax ,PlaceId,pendingTax) values ("${body.address}",${body.NoOfIndividuals},${body.Above18}, ${body.Below18},${body.CalenderYear}, ${body.YealyTax},"${body.PlaceId}",${body.pendingTax})`, (err, result, field) => {
+    console.log('post received');
+    db.query(`insert into UserTable( address , NoOfIndividuals ,  Above18  ,  Below18 ,  YealyTax ,PlaceId,pendingTax, firstName, middleName, lastName) values ("${body.address}",${body.NoOfIndividuals},${body.Above18}, ${body.Below18}, ${body.YealyTax},"${body.PlaceId}",${body.pendingTax}, "${body.firstName}", "${body.middleName}", "${body.lastName}")`, (err, result, field) => {
         if (err) {
             console.log(err);
             res.status(500).send("Something went wrong");
