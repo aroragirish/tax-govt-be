@@ -114,6 +114,23 @@ app.post("/getData", (req, res) => {
     })
 });
 
+app.get("/getUsers",cors(), (req, res) => {
+    db.query(`select * from UserTable`, (err, result, field) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send("Something went wrong");
+        }
+        if (result.length) {
+            console.log(result);
+            res.status(200).json({
+                data: result
+            })
+        } else {
+            res.status(404).send("Data not found");
+        }
+    })
+})
+
 app.post("/postData", (req, res) => {
     const body = req.body;
     console.log('post received');
