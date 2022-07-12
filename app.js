@@ -53,7 +53,12 @@ app.use((req, res, next) => {
     return jwtTokenValidate(req, res, next);
   });
 
-  app.use(cors())
+  var corsOptions = {
+    origin: 'http://ec2-43-204-113-243.ap-south-1.compute.amazonaws.com',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  }
+
+  app.use(cors(corsOptions))
 
 const db = mysql.createConnection({
     host: "mytestdb.cfmqtzlsywwt.ap-south-1.rds.amazonaws.com",
