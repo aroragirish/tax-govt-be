@@ -1,9 +1,10 @@
-const express = require("express");
-const mysql = require("mysql");
-var cors = require("cors")
-var bodyParser = require("body-parser");
-const jwt = require("jsonwebtoken");
-const url = require("url");
+import express from "express";
+import mysql from "mysql";
+import cors from "cors";
+import bodyParser from "body-parser";
+import jwt from "jsonwebtoken";
+import url from "url";
+import axios from "axios";
 
 const app = express();
 const jsonParser = bodyParser.json();
@@ -119,20 +120,41 @@ app.post("/login", (req, res) => {
 
 app.post("/getData", (req, res) => {
     const { placeId } = req.body;
-    db.query(`select * from UserTable where PlaceId="${placeId}"`, (err, result, field) => {
-        if (err) {
-            console.log(err);
-            res.status(500).send("Something went wrong");
-        }
-        if (result.length) {
-            console.log(result);
-            res.status(200).json({
-                data: result[0]
-            })
-        } else {
-            res.status(404).send("Data not found");
-        }
+    console.log(placeId)
+    axios.get(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=AIzaSyD6KzAklNI0lRpFqWsn_L7LGxLBV5pNg1U`).then((result) => {
+        console.log(result.data);
+        res.status(200).send(result.data)
+    }).catch((err) => {
+        console.log(err);
+        res.status(500).send("Something went wrong");
     })
+    
+});
+
+app.post("/geoReverseCoding", (req, res) => {
+    const { LatLng } = req.body;
+    console.log(LatLng)
+    axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${LatLng}&key=AIzaSyCfJFJA4bzonkKfa4geg2CAv2jwbjfxr5o`).then((result) => {
+        console.log(result.data);
+        res.status(200).send(result.data)
+    }).catch((err) => {
+        console.log(err);
+        res.status(500).send("Something went wrong");
+    })
+    
+});
+
+app.post("/getLocation", (req, res) => {
+    const { term } = req.body;
+    // console.log(term)
+    axios.get(`https://maps.google.com/maps/api/geocode/json?address=${term}&sensor=false&key=AIzaSyCfJFJA4bzonkKfa4geg2CAv2jwbjfxr5o`).then((result) => {
+        console.log(result.data);
+        res.status(200).send(result.data)
+    }).catch((err) => {
+        console.log(err);
+        res.status(500).send("Something went wrong");
+    })
+    
 });
 
 app.get("/getUsers",cors(), (req, res) => {
