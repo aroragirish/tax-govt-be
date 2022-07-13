@@ -12,9 +12,9 @@ const SECRET_KEY = "testBE";
 
 const jwtTokenValidate = (req, res, next) => {
     // check header or url parameters or post parameters for token
-    var token = req?.body?.token || req?.query?.token || req?.headers["x-access-token"];
-
+    var token = req?.body?.token || req?.query?.token || req?.headers["authorization"];
     // decode token
+	console.log(req.headers)
     if (token) {
 
       // verifies secret and checks exp
@@ -41,6 +41,22 @@ const jwtTokenValidate = (req, res, next) => {
     }
   }
 
+var resolveCrossDomain = function(req, res,next) {
+
+	    res.header('Access-Control-Allow-Origin', '*');
+	    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+	    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+	    res.header("Access-Control-Allow-Credentials", true);
+
+	    if ('OPTIONS' == req.method) {
+		            res.send(200);
+		        }
+	    else {
+		            next();
+		        }
+}; 
+    app.use(resolveCrossDomain);
+
 app.use((req, res, next) => {
     const path = url.parse(req.url).pathname;
     console.log(path);
@@ -54,7 +70,7 @@ app.use((req, res, next) => {
   });
 
   var corsOptions = {
-    origin: 'http://ec2-43-204-113-243.ap-south-1.compute.amazonaws.com',
+	  origin: ['*'],
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
   }
 
